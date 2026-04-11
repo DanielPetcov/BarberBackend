@@ -1,11 +1,18 @@
-import { pgTable, uuid, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core';
 import { userRoles } from './enums';
 
 export const user = pgTable('users', {
-  id: uuid('id').defaultRandom().primaryKey(),
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  emailVerified: boolean('email_verified').default(false).notNull(),
+  image: text('image'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 
-  email: varchar('email', { length: 255 }).notNull(),
-  password: varchar('password', { length: 255 }).notNull(),
-
+  // @ Custom attributes
   role: userRoles('role').notNull(),
 });

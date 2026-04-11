@@ -6,7 +6,7 @@ import { timestamp } from 'drizzle-orm/pg-core';
 export const worker = pgTable('workers', {
   id: uuid('id').defaultRandom().primaryKey(),
 
-  userId: uuid('user_id')
+  userId: text('user_id')
     .references(() => user.id)
     .notNull(),
   fullName: varchar('full_name', { length: 255 }).notNull(),

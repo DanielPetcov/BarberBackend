@@ -1,15 +1,7 @@
 import { pgTable, uuid, timestamp, boolean } from 'drizzle-orm/pg-core';
 import { worker } from './worker';
-import { pgEnum } from 'drizzle-orm/pg-core';
 
-const dayOfWeek = pgEnum('day_of_week', [
-  'monday',
-  'tuesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
-]);
+import { dayOfWeek } from './enums';
 
 export const workerAvailability = pgTable('worker_availability', {
   id: uuid('id').defaultRandom().primaryKey(),
