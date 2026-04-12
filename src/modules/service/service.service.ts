@@ -20,4 +20,8 @@ export class ServiceService {
     const res = await this._repo.create({ ...dto, businessId: businessId });
     return res;
   }
+
+  async delete(serviceId: string, businessId: string) {
+    const res = await this._repo.delete(serviceId, businessId);
+  }
 }

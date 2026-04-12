@@ -19,7 +19,8 @@ export const user = pgTable('users', {
     .notNull(),
 
   // @ Custom attributes
-  role: userRoles('role').default('client').notNull(),
+  isActive: boolean('is_active').default(true).notNull(),
+  role: userRoles('role').default('worker').notNull(),
   businessId: uuid('business_id').references(() => business.id),
 });
 
