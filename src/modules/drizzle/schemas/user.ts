@@ -1,8 +1,13 @@
-import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean, uuid } from 'drizzle-orm/pg-core';
 import { userRoles } from './enums';
 
+import { v4 as uuidv4 } from 'uuid';
+import { business } from './business';
+
 export const user = pgTable('users', {
-  id: text('id').primaryKey(),
+  id: text('id')
+    .$defaultFn(() => uuidv4())
+    .primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified').default(false).notNull(),
@@ -14,5 +19,8 @@ export const user = pgTable('users', {
     .notNull(),
 
   // @ Custom attributes
-  role: userRoles('role').notNull(),
+  role: userRoles('role').default('client').notNull(),
+  businessId: uuid('business_id').references(() => business.id),
 });
+
+export type UpdateUser = Partial<typeof user.$inferInsert>;

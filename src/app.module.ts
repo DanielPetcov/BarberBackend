@@ -6,6 +6,8 @@ import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { auth } from './auth';
 
 import { LoggerModule } from 'pino-nestjs';
+import { BusinessModule } from './modules/business/business.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -23,6 +25,9 @@ import { LoggerModule } from 'pino-nestjs';
         level: process.env.NODE_ENV !== 'production' ? 'debug' : 'info',
       },
     }),
+
+    BusinessModule,
+    UserModule,
   ],
 })
 export class AppModule {}

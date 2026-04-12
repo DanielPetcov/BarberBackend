@@ -13,3 +13,6 @@ export const business = pgTable('businesses', {
   logoUrl: text('logo_url'),
   telegramChatId: text('telegram_chat_id'),
 });
+
+export type CreateBusiness = typeof business.$inferInsert;
+export type UpdateBusiness = Partial<typeof business.$inferInsert>;
