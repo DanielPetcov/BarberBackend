@@ -26,8 +26,10 @@ export default () => {
     throw new Error('Database port missing');
   }
 
-  const DATABASE_URL = `postgresql://${databaseHost}:${databasePassword}@localhost:${databasePort}/${databaseName}?sslmode=require&connect_timeout=10&pool_timeout=15`;
-
+  const DATABASE_URL =
+    `postgresql://${databaseUser}:${databasePassword}` +
+    `@${databaseHost}:${databasePort}/${databaseName}` +
+    `?connect_timeout=10`;
   return {
     POST: parseInt(port, 10),
     DATABASE_URL: DATABASE_URL,

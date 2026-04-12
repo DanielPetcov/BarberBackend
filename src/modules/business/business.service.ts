@@ -7,10 +7,14 @@ export class BusinessService {
   constructor(private readonly _repo: BusinessRepository) {}
 
   async getBusiness(businessId: string) {
-    const business = await this._repo.get(businessId);
-    if (!business) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    try {
+      const business = await this._repo.get(businessId);
+      if (!business) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
 
-    return business;
+      return business;
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+    }
   }
 
   async createBusiness(dto: CreateBusiness) {

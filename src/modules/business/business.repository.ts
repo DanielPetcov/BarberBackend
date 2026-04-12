@@ -16,16 +16,23 @@ export class BusinessRepository {
   ) {}
 
   async get(businessId: string): Promise<BusinessEntity | null> {
-    const { id, ...rest } = getTableColumns(schema.business);
-    const [row] = await this._db
-      .select(rest)
-      .from(schema.business)
-      .where(eq(schema.business.id, businessId))
-      .limit(1);
+    try {
+      const { id, ...rest } = getTableColumns(schema.business);
 
-    return row ?? null;
+      const [row] = await this._db
+        .select(rest)
+        .from(schema.business)
+        .where(eq(schema.business.id, businessId))
+        .limit(1);
+
+      return row ?? null;
+    } catch (error) {
+      console.error('FULL ERROR:', error);
+      console.error('CAUSE:', (error as any)?.cause);
+      console.error('CAUSE MESSAGE:', (error as any)?.cause?.message);
+      throw error;
+    }
   }
-
   async create(model: CreateBusiness): Promise<BusinessEntity> {
     const [row] = await this._db
       .insert(schema.business)
