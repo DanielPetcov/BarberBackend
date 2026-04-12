@@ -2,9 +2,13 @@ import { pgTable, uuid, varchar, text } from 'drizzle-orm/pg-core';
 import { user } from './user';
 import { boolean } from 'drizzle-orm/pg-core';
 import { timestamp } from 'drizzle-orm/pg-core';
+import { business } from './business';
 
 export const worker = pgTable('workers', {
   id: uuid('id').defaultRandom().primaryKey(),
+  businessId: uuid('business_id')
+    .references(() => business.id)
+    .notNull(),
 
   userId: text('user_id')
     .references(() => user.id)

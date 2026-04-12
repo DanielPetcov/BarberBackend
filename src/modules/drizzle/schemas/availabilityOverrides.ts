@@ -1,9 +1,13 @@
 import { pgTable, uuid, timestamp, boolean, text } from 'drizzle-orm/pg-core';
 import { worker } from './worker';
 import { date } from 'drizzle-orm/pg-core';
+import { business } from './business';
 
 export const availabilityOverrides = pgTable('availability_overrides', {
   id: uuid('id').defaultRandom().primaryKey(),
+  businessId: uuid('business_id')
+    .references(() => business.id)
+    .notNull(),
 
   workerId: uuid('worker_id')
     .references(() => worker.id)

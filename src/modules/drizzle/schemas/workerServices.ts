@@ -3,11 +3,15 @@ import { worker } from './worker';
 import { service } from './service';
 import { unique } from 'drizzle-orm/pg-core';
 import { boolean } from 'drizzle-orm/pg-core';
+import { business } from './business';
 
 export const workerServices = pgTable(
   'workerServices',
   {
     id: uuid('id').defaultRandom().primaryKey(),
+    businessId: uuid('business_id')
+      .references(() => business.id)
+      .notNull(),
 
     workerId: uuid('worker_id')
       .references(() => worker.id)

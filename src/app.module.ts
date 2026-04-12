@@ -8,6 +8,8 @@ import { auth } from './auth';
 import { LoggerModule } from 'pino-nestjs';
 import { BusinessModule } from './modules/business/business.module';
 import { UserModule } from './modules/user/user.module';
+import { ServiceModule } from './modules/service/service.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { UserModule } from './modules/user/user.module';
 
     BusinessModule,
     UserModule,
+    ServiceModule,
+    AdminModule,
   ],
 })
 export class AppModule {}
