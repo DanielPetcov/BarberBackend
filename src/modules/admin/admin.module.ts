@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { ServiceModule } from '../service/service.module';
 import { AdminService } from './admin.service';
 import { AdminController } from './admin.controller';
-import { UserModule } from '../user/user.module';
+import { WorkerModule } from '../worker/worker.module';
 
 @Module({
-  imports: [ServiceModule, UserModule],
+  imports: [ServiceModule, WorkerModule],
   providers: [AdminService],
   controllers: [AdminController],
 })

@@ -1,7 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateServiceDto } from '../service/domain/create-service.dto';
-import { CreateWorkerDto } from '../user/domain/create-worker.dto';
+import { CreateWorkerDto } from '../worker/domain/create-worker.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -10,54 +18,58 @@ export class AdminController {
   // services
 
   @Get('/services')
-  async getServices() {
-    return await this._service.getServices();
+  async getServices(@Req() req: Request) {
+    const data = await this._service.getServices(req.headers);
+    console.log(data);
+    return data;
   }
 
   @Get('/services/:id')
-  async getService(@Param('id') id: string) {
-    return await this._service.getService(id);
+  async getService(@Req() req: Request, @Param('id') id: string) {
+    return await this._service.getService(req.headers, id);
   }
 
   @Post('/services')
-  async createService(@Body() dto: CreateServiceDto) {
-    return await this._service.createService(dto);
+  async createService(@Req() req: Request, @Body() dto: CreateServiceDto) {
+    console.log(dto);
+
+    return await this._service.createService(req.headers, dto);
   }
 
   @Delete('/services/:id')
-  async deleteService(@Param('id') id: string) {
-    return await this._service.deleteService(id);
+  async deleteService(@Req() req: Request, @Param('id') id: string) {
+    return await this._service.deleteService(req.headers, id);
   }
 
   // workers
 
   @Get('/workers')
-  async getWorkers() {
-    return await this._service.getWorkers();
+  async getWorkers(@Req() req: Request) {
+    return await this._service.getWorkers(req.headers);
   }
 
   @Get('/workers/:id')
-  async getWorker(@Param('id') id: string) {
-    return await this._service.getWorker(id);
+  async getWorker(@Req() req: Request, @Param('id') id: string) {
+    return await this._service.getWorker(req.headers, id);
   }
 
   @Post('/workers')
-  async createWorker(@Body() dto: CreateWorkerDto) {
-    return await this._service.createWorker(dto);
+  async createWorker(@Req() req: Request, @Body() dto: CreateWorkerDto) {
+    return await this._service.createWorker(req.headers, dto);
   }
 
   @Post('/workers/:id/deactivate')
-  async deactivateWorker(@Param('id') id: string) {
-    return await this._service.deactivateWorker(id);
+  async deactivateWorker(@Req() req: Request, @Param('id') id: string) {
+    return await this._service.deactivateWorker(req.headers, id);
   }
 
   @Post('/workers/:id/activate')
-  async activateWorker(@Param('id') id: string) {
-    return await this._service.activateWorker(id);
+  async activateWorker(@Req() req: Request, @Param('id') id: string) {
+    return await this._service.activateWorker(req.headers, id);
   }
 
   @Delete('/workers/:id')
-  async deleteWorker(@Param('id') id: string) {
-    return await this._service.deleteWorker(id);
+  async deleteWorker(@Req() req: Request, @Param('id') id: string) {
+    return await this._service.deleteWorker(req.headers, id);
   }
 }

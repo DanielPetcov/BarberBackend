@@ -21,6 +21,10 @@ export class ServiceRepository {
     return rows;
   }
 
+  async getAllPublic(): Promise<ServiceEntity[]> {
+    return await this._db.select().from(schema.service);
+  }
+
   async get(
     serviceId: string,
     businessId: string,

@@ -7,21 +7,24 @@ export class ServiceService {
   constructor(private readonly _repo: ServiceRepository) {}
 
   async getAll(businessId: string) {
-    const res = await this._repo.getAll(businessId);
-    return res;
+    return await this._repo.getAll(businessId);
   }
 
   async get(serviceId: string, businessId: string) {
-    const res = await this._repo.get(serviceId, businessId);
-    return res;
+    return await this._repo.get(serviceId, businessId);
   }
 
   async create(businessId: string, dto: CreateServiceDto) {
-    const res = await this._repo.create({ ...dto, businessId: businessId });
-    return res;
+    return await this._repo.create({ ...dto, businessId: businessId });
   }
 
   async delete(serviceId: string, businessId: string) {
-    const res = await this._repo.delete(serviceId, businessId);
+    return await this._repo.delete(serviceId, businessId);
+  }
+
+  // public
+
+  async getAllPublic() {
+    return await this._repo.getAllPublic();
   }
 }

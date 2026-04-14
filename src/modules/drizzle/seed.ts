@@ -8,7 +8,9 @@ import { auth } from 'src/auth';
 import { user } from './schemas';
 import { eq } from 'drizzle-orm';
 
-const pool = new Pool({ connectionString: DATABASE_URL });
+console.log(DATABASE_URL);
+
+const pool = new Pool({ connectionString: DATABASE_URL, ssl: false });
 const db = drizzle(pool);
 
 async function seed() {
