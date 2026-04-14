@@ -5,5 +5,6 @@ export class WorkerResponseDto {
     public phone: string | null,
     public photoUrl: string | null,
     public bio: string | null,
+    public services: { id: string }[],
   ) {}
 }
