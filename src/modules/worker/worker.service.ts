@@ -5,10 +5,14 @@ import { WorkerRepository } from './worker.repository';
 import { CreateWorkerDto } from './domain/create-worker.dto';
 import { getBusinessIdAdmin } from 'src/helpers';
 import { isAdmin } from 'src/helpers/isAdmin';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class WorkerService {
-  constructor(private readonly _repo: WorkerRepository) {}
+  constructor(
+    private readonly _repo: WorkerRepository,
+    private readonly _userService: UserService,
+  ) {}
 
   async getAll(headers: Headers) {
     const businessId = await getBusinessIdAdmin(headers);
@@ -38,7 +42,13 @@ export class WorkerService {
     });
 
     const businessId = await getBusinessIdAdmin(headers);
-    return await this._repo.update(user.id, { businessId: businessId });
+    await this._userService.updateUserBusinessId(user.id, businessId);
+
+    return await this._repo.create({
+      businessId,
+      userId: user.id,
+      fullName: user.name,
+    });
   }
 
   async deactivateWorker(headers: Headers, workerId: string) {

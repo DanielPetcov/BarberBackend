@@ -1,8 +1,9 @@
 export class WorkerResponseDto {
   constructor(
     public id: string,
-    public name: string,
-    public email: string,
-    public image: string | null,
+    public fullName: string,
+    public phone: string | null,
+    public photoUrl: string | null,
+    public bio: string | null,
   ) {}
 }

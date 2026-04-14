@@ -15,37 +15,38 @@ export class WorkerRepository {
 
   async update(
     workerId: string,
-    dto: schema.UpdateUser,
+    dto: schema.UpdateWorker,
   ): Promise<WorkerResponseDto | null> {
     const workerColumns = this.getWorkerColumns();
     const [row] = await this._db
-      .update(schema.user)
+      .update(schema.worker)
       .set({ ...dto })
-      .where(eq(schema.user.id, workerId))
+      .where(eq(schema.worker.id, workerId))
       .returning(workerColumns);
     return row ?? null;
+  }
+
+  async create(dto: schema.CreateWorker): Promise<WorkerResponseDto> {
+    const workerColumns = this.getWorkerColumns();
+    const [row] = await this._db
+      .insert(schema.worker)
+      .values(dto)
+      .returning(workerColumns);
+    return row;
   }
 
   async getAll(businessId: string): Promise<WorkerResponseDto[]> {
     const workerColumns = this.getWorkerColumns();
     const rows = await this._db
       .select(workerColumns)
-      .from(schema.user)
-      .where(
-        and(
-          eq(schema.user.businessId, businessId),
-          eq(schema.user.role, 'worker'),
-        ),
-      );
+      .from(schema.worker)
+      .where(eq(schema.worker.businessId, businessId));
     return rows;
   }
 
   async getAllPublic(): Promise<WorkerResponseDto[]> {
     const workerColumns = this.getWorkerColumns();
-    const rows = await this._db
-      .select(workerColumns)
-      .from(schema.user)
-      .where(and(eq(schema.user.role, 'worker')));
+    const rows = await this._db.select(workerColumns).from(schema.worker);
     return rows;
   }
 
@@ -56,11 +57,11 @@ export class WorkerRepository {
     const workerColumns = this.getWorkerColumns();
     const [row] = await this._db
       .select(workerColumns)
-      .from(schema.user)
+      .from(schema.worker)
       .where(
         and(
-          eq(schema.user.id, workerId),
-          eq(schema.user.businessId, businessId),
+          eq(schema.worker.id, workerId),
+          eq(schema.worker.businessId, businessId),
         ),
       )
       .limit(1);
@@ -70,8 +71,8 @@ export class WorkerRepository {
   async delete(workerId: string): Promise<WorkerResponseDto | null> {
     const workerColumns = this.getWorkerColumns();
     const [row] = await this._db
-      .delete(schema.user)
-      .where(eq(schema.user.id, workerId))
+      .delete(schema.worker)
+      .where(eq(schema.worker.id, workerId))
       .returning(workerColumns);
     return row ?? null;
   }
@@ -80,12 +81,12 @@ export class WorkerRepository {
     const {
       createdAt,
       updatedAt,
-      role,
       isActive,
       businessId,
-      emailVerified,
+      userId,
+      telegramChatId,
       ...rest
-    } = getTableColumns(schema.user);
+    } = getTableColumns(schema.worker);
     return rest;
   }
 }

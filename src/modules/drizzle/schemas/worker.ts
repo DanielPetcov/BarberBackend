@@ -24,3 +24,6 @@ export const worker = pgTable('workers', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at'),
 });
+
+export type UpdateWorker = Partial<typeof worker.$inferInsert>;
+export type CreateWorker = typeof worker.$inferInsert;
