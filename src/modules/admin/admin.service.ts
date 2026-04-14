@@ -59,4 +59,34 @@ export class AdminService {
   async deleteWorker(headers: Headers, workerId: string) {
     return await this._workerService.delete(headers, workerId);
   }
+
+  async assignServiceToWorker(
+    headers: Headers,
+    workerId: string,
+    serviceId: string,
+  ) {
+    const businessId = await getBusinessIdAdmin(headers);
+
+    return await this._workerService.assignService(
+      headers,
+      workerId,
+      serviceId,
+      businessId,
+    );
+  }
+
+  async removeServiceFromWorker(
+    headers: Headers,
+    workerId: string,
+    serviceId: string,
+  ) {
+    const businessId = await getBusinessIdAdmin(headers);
+
+    return await this._workerService.removeSerivce(
+      headers,
+      workerId,
+      serviceId,
+      businessId,
+    );
+  }
 }

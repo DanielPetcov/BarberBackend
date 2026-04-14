@@ -74,4 +74,52 @@ export class WorkerService {
     }
     return await this._repo.delete(workerId);
   }
+
+  async assignService(
+    headers: Headers,
+    workerId: string,
+    serviceId: string,
+    businessId: string,
+  ): Promise<string> {
+    const admin = await isAdmin(headers);
+    if (!admin) {
+      throw new HttpException('Access denied', HttpStatus.FORBIDDEN);
+    }
+
+    const assigned = await this._repo.assignService(
+      workerId,
+      serviceId,
+      businessId,
+    );
+    if (!assigned)
+      throw new HttpException(
+        'The relation could not be made',
+        HttpStatus.NOT_IMPLEMENTED,
+      );
+    return assigned;
+  }
+
+  async removeSerivce(
+    headers: Headers,
+    workerId: string,
+    serviceId: string,
+    businessId: string,
+  ): Promise<string> {
+    const admin = await isAdmin(headers);
+    if (!admin) {
+      throw new HttpException('Access denied', HttpStatus.FORBIDDEN);
+    }
+
+    const removed = await this._repo.removeService(
+      workerId,
+      serviceId,
+      businessId,
+    );
+    if (!removed)
+      throw new HttpException(
+        'The relation could not be deleted',
+        HttpStatus.NOT_IMPLEMENTED,
+      );
+    return removed;
+  }
 }

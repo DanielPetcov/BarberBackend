@@ -1,7 +1,14 @@
-import { pgTable, uuid, integer, primaryKey, index } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  integer,
+  index,
+  unique,
+  primaryKey,
+} from 'drizzle-orm/pg-core';
+import { boolean } from 'drizzle-orm/pg-core';
 import { worker } from './worker';
 import { service } from './service';
-import { boolean } from 'drizzle-orm/pg-core';
 import { business } from './business';
 
 export const workerServices = pgTable(
@@ -25,7 +32,7 @@ export const workerServices = pgTable(
     isActive: boolean('is_active').default(true).notNull(),
   },
   (table) => [
-    primaryKey({ columns: [table.workerId, table.serviceId] }),
+    unique('uq_worker_service').on(table.workerId, table.serviceId),
     index('worker_services_worker_id_idx').on(table.workerId),
     index('worker_services_service_id_idx').on(table.serviceId),
   ],

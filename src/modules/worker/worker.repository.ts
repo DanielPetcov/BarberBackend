@@ -119,6 +119,70 @@ export class WorkerRepository {
     return this.toDto(existing);
   }
 
+  async assignService(
+    workerId: string,
+    serviceId: string,
+    businessId: string,
+  ): Promise<string | null> {
+    const existingWorker = await this._db.query.worker.findFirst({
+      where: eq(schema.worker.id, workerId),
+      columns: { id: true, businessId: true },
+    });
+    if (!existingWorker) return null;
+
+    const existingService = await this._db.query.service.findFirst({
+      where: eq(schema.service.id, serviceId),
+      columns: { id: true, businessId: true },
+    });
+    if (!existingService) return null;
+
+    if (existingWorker.businessId !== existingService.businessId) return null;
+
+    const [inserted] = await this._db
+      .insert(schema.workerServices)
+      .values({
+        workerId,
+        serviceId,
+        businessId,
+      })
+      .returning();
+
+    return inserted.id ?? null;
+  }
+
+  async removeService(
+    workerId: string,
+    serviceId: string,
+    businessId: string,
+  ): Promise<string | null> {
+    const existingWorker = await this._db.query.worker.findFirst({
+      where: eq(schema.worker.id, workerId),
+      columns: { id: true, businessId: true },
+    });
+    if (!existingWorker) return null;
+
+    const existingService = await this._db.query.service.findFirst({
+      where: eq(schema.service.id, serviceId),
+      columns: { id: true, businessId: true },
+    });
+    if (!existingService) return null;
+
+    if (existingWorker.businessId !== existingService.businessId) return null;
+
+    const [removed] = await this._db
+      .delete(schema.workerServices)
+      .where(
+        and(
+          eq(schema.workerServices.workerId, workerId),
+          eq(schema.workerServices.serviceId, serviceId),
+          eq(schema.workerServices.businessId, businessId),
+        ),
+      )
+      .returning();
+
+    return removed.id ?? null;
+  }
+
   private async findWorkerWithServicesById(workerId: string) {
     return this._db.query.worker.findFirst({
       where: eq(schema.worker.id, workerId),

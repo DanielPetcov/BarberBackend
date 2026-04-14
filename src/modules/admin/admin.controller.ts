@@ -72,4 +72,30 @@ export class AdminController {
   async deleteWorker(@Req() req: Request, @Param('id') id: string) {
     return await this._service.deleteWorker(req.headers, id);
   }
+
+  @Post('/workers/:workerId/service/:serviceId')
+  async addWorkerService(
+    @Req() req: Request,
+    @Param('workerId') workerId: string,
+    @Param('serviceId') serviceId: string,
+  ) {
+    return await this._service.assignServiceToWorker(
+      req.headers,
+      workerId,
+      serviceId,
+    );
+  }
+
+  @Delete('/workers/:workerId/service/:serviceId')
+  async removeServiceFromWorker(
+    @Req() req: Request,
+    @Param('workerId') workerId: string,
+    @Param('serviceId') serviceId: string,
+  ) {
+    return await this._service.removeServiceFromWorker(
+      req.headers,
+      workerId,
+      serviceId,
+    );
+  }
 }
