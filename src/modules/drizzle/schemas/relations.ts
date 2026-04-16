@@ -6,6 +6,8 @@ import { session, account } from './auth';
 import { worker } from './worker';
 import { service } from './service';
 import { workerServices } from './workerServices';
+import { reservation } from './reservation';
+import { workerSchedule } from './workerSchedule';
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -32,10 +34,13 @@ export const workerRelations = relations(worker, ({ one, many }) => ({
     references: [user.id],
   }),
   workerServices: many(workerServices),
+  reservations: many(reservation),
+  schedules: many(workerSchedule),
 }));
 
 export const serviceRelations = relations(service, ({ many }) => ({
   workerServices: many(workerServices),
+  reservations: many(reservation),
 }));
 
 export const workerServicesRelations = relations(workerServices, ({ one }) => ({
@@ -46,5 +51,23 @@ export const workerServicesRelations = relations(workerServices, ({ one }) => ({
   service: one(service, {
     fields: [workerServices.serviceId],
     references: [service.id],
+  }),
+}));
+
+export const reservationRelations = relations(reservation, ({ one }) => ({
+  worker: one(worker, {
+    fields: [reservation.workerId],
+    references: [worker.id],
+  }),
+  service: one(service, {
+    fields: [reservation.serviceId],
+    references: [service.id],
+  }),
+}));
+
+export const scheduleRelations = relations(workerSchedule, ({ one }) => ({
+  worker: one(worker, {
+    fields: [workerSchedule.workerId],
+    references: [worker.id],
   }),
 }));

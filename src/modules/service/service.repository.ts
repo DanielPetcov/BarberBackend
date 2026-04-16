@@ -5,6 +5,7 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../drizzle/schemas';
 import { ServiceEntity } from './domain/service.entity';
 import { and, eq } from 'drizzle-orm';
+import { ServiceWorkersResponseDto } from './domain/service-workers-response.dto';
 
 @Injectable()
 export class ServiceRepository {
@@ -61,5 +62,39 @@ export class ServiceRepository {
       )
       .returning();
     return row ?? null;
+  }
+
+  async getServiceAvailableWorkers(
+    serviceId: string,
+  ): Promise<ServiceWorkersResponseDto | null> {
+    const service = await this._db.query.service.findFirst({
+      where: eq(schema.service.id, serviceId),
+      with: {
+        workerServices: {
+          with: {
+            worker: {
+              columns: {
+                id: true,
+                fullName: true,
+                photoUrl: true,
+              },
+            },
+          },
+          columns: {
+            customPrice: true,
+            customDurationMinutes: true,
+          },
+        },
+      },
+      columns: {
+        id: true,
+        name: true,
+        description: true,
+        durationMinutes: true,
+        price: true,
+      },
+    });
+
+    return service ?? null;
   }
 }

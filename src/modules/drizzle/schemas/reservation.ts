@@ -3,20 +3,34 @@ import { uuid } from 'drizzle-orm/pg-core';
 import { pgTable, date, text } from 'drizzle-orm/pg-core';
 import { reservationStatuses } from './enums';
 import { business } from './business';
+import { worker } from './worker';
+import { service } from './service';
 
 export const reservation = pgTable('reservations', {
   id: uuid('id').defaultRandom().primaryKey(),
+
   businessId: uuid('business_id')
     .references(() => business.id)
+    .notNull(),
+
+  workerId: uuid('worker_id')
+    .references(() => worker.id)
+    .notNull(),
+
+  serviceId: uuid('service_id')
+    .references(() => service.id)
     .notNull(),
 
   reservationDate: date('reservation_date', { mode: 'date' }).notNull(),
   startTime: timestamp('start_time').notNull(),
   endTime: timestamp('end_time').notNull(),
-  status: reservationStatuses('reservation_roles').default('pending').notNull(),
+
+  status: reservationStatuses('status').default('pending').notNull(),
   notes: text('notes'),
-  cancelReason: text('notes'),
+  cancelReason: text('cancel_reason'),
 
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at'),
 });
+
+export type Reservation = typeof reservation.$inferSelect;

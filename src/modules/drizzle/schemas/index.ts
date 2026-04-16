@@ -7,6 +7,7 @@ export * from './user';
 export * from './worker';
 export * from './workerAvailability';
 export * from './workerServices';
+export * from './workerSchedule';
 
 export * from './enums';
 export * from './relations';

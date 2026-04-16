@@ -22,8 +22,11 @@ export class ServiceService {
     return await this._repo.delete(serviceId, businessId);
   }
 
-  // public
+  async getServiceAvailableWorkers(serviceId: string) {
+    return await this._repo.getServiceAvailableWorkers(serviceId);
+  }
 
+  // public
   async getAllPublic() {
     return await this._repo.getAllPublic();
   }
