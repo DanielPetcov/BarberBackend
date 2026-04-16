@@ -4,6 +4,7 @@ import { getBusinessIdAdmin } from 'src/helpers';
 import { CreateServiceDto } from '../service/domain/create-service.dto';
 import { WorkerService } from '../worker/worker.service';
 import { CreateWorkerDto } from '../worker/domain/create-worker.dto';
+import { CreateWorkerScheduleDto } from '../worker/domain/create-worker-schedule.dto';
 
 @Injectable()
 export class AdminService {
@@ -88,5 +89,23 @@ export class AdminService {
       serviceId,
       businessId,
     );
+  }
+
+  async createSchedule(
+    headers: Headers,
+    workerId: string,
+    dto: CreateWorkerScheduleDto,
+  ) {
+    const businessId = await getBusinessIdAdmin(headers);
+    if (!businessId) return;
+
+    return await this._workerService.createSchedule(workerId, dto);
+  }
+
+  async deleteSchedule(headers: Headers, workerId: string, day: number) {
+    const businessId = await getBusinessIdAdmin(headers);
+    if (!businessId) return;
+
+    return await this._workerService.deleteSchedule(workerId, day);
   }
 }

@@ -6,5 +6,10 @@ export class WorkerResponseDto {
     public photoUrl: string | null,
     public bio: string | null,
     public services: { id: string }[],
+    public schedules?: {
+      day: number;
+      startTime: string;
+      endTime: string;
+    }[],
   ) {}
 }

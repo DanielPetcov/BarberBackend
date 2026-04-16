@@ -6,6 +6,7 @@ import { CreateWorkerDto } from './domain/create-worker.dto';
 import { getBusinessIdAdmin } from 'src/helpers';
 import { isAdmin } from 'src/helpers/isAdmin';
 import { UserService } from '../user/user.service';
+import { CreateWorkerScheduleDto } from './domain/create-worker-schedule.dto';
 
 @Injectable()
 export class WorkerService {
@@ -121,5 +122,13 @@ export class WorkerService {
         HttpStatus.NOT_IMPLEMENTED,
       );
     return removed;
+  }
+
+  async createSchedule(workerId: string, dto: CreateWorkerScheduleDto) {
+    return await this._repo.createSchedule(workerId, dto);
+  }
+
+  async deleteSchedule(workerId: string, day: number) {
+    return await this._repo.deleteSchedule(workerId, day);
   }
 }

@@ -10,6 +10,7 @@ import {
 import { AdminService } from './admin.service';
 import { CreateServiceDto } from '../service/domain/create-service.dto';
 import { CreateWorkerDto } from '../worker/domain/create-worker.dto';
+import { CreateWorkerScheduleDto } from '../worker/domain/create-worker-schedule.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -97,5 +98,23 @@ export class AdminController {
       workerId,
       serviceId,
     );
+  }
+
+  @Post('/workers/:workerId/schedules')
+  async createWorkerSchedule(
+    @Req() req: Request,
+    @Param('workerId') workerId: string,
+    @Body() dto: CreateWorkerScheduleDto,
+  ) {
+    return await this._service.createSchedule(req.headers, workerId, dto);
+  }
+
+  @Delete('/workers/:workerId/schedules/:day')
+  async deleteWorkerSchedule(
+    @Req() req: Request,
+    @Param('workerId') workerId: string,
+    @Param('day') day: number,
+  ) {
+    return await this._service.deleteSchedule(req.headers, workerId, day);
   }
 }

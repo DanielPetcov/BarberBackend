@@ -5,9 +5,12 @@ import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { DrizzleAsyncProvider } from '../drizzle/drizzle.service';
 import * as schema from '../drizzle/schemas';
 import { WorkerResponseDto } from './domain/worker-response.dto';
+import { CreateWorkerScheduleDto } from './domain/create-worker-schedule.dto';
 
-type WorkerWithServices = Awaited<
-  ReturnType<(typeof WorkerRepository.prototype)['findWorkerWithServicesById']>
+type WorkerWithServicesAndSchedules = Awaited<
+  ReturnType<
+    (typeof WorkerRepository.prototype)['findWorkerWithServicesAndSchedulesById']
+  >
 >;
 
 @Injectable()
@@ -29,7 +32,7 @@ export class WorkerRepository {
 
     if (!updated) return null;
 
-    const row = await this.findWorkerWithServicesById(updated.id);
+    const row = await this.findWorkerWithServicesAndSchedulesById(updated.id);
     return row ? this.toDto(row) : null;
   }
 
@@ -39,7 +42,7 @@ export class WorkerRepository {
       .values(dto)
       .returning({ id: schema.worker.id });
 
-    const row = await this.findWorkerWithServicesById(created.id);
+    const row = await this.findWorkerWithServicesAndSchedulesById(created.id);
 
     if (!row) {
       throw new Error('Worker was created but could not be reloaded');
@@ -61,6 +64,13 @@ export class WorkerRepository {
             },
           },
         },
+        schedules: {
+          columns: {
+            dayOfWeek: true,
+            startTime: true,
+            endTime: true,
+          },
+        },
       },
     });
 
@@ -77,6 +87,13 @@ export class WorkerRepository {
                 id: true,
               },
             },
+          },
+        },
+        schedules: {
+          columns: {
+            dayOfWeek: true,
+            startTime: true,
+            endTime: true,
           },
         },
       },
@@ -104,6 +121,13 @@ export class WorkerRepository {
             },
           },
         },
+        schedules: {
+          columns: {
+            dayOfWeek: true,
+            startTime: true,
+            endTime: true,
+          },
+        },
       },
     });
 
@@ -111,7 +135,8 @@ export class WorkerRepository {
   }
 
   async delete(workerId: string): Promise<WorkerResponseDto | null> {
-    const existing = await this.findWorkerWithServicesById(workerId);
+    const existing =
+      await this.findWorkerWithServicesAndSchedulesById(workerId);
     if (!existing) return null;
 
     await this._db.delete(schema.worker).where(eq(schema.worker.id, workerId));
@@ -183,7 +208,40 @@ export class WorkerRepository {
     return removed.id ?? null;
   }
 
-  private async findWorkerWithServicesById(workerId: string) {
+  async createSchedule(
+    workerId: string,
+    dto: CreateWorkerScheduleDto,
+  ): Promise<schema.WorkerSchedule> {
+    const [schedule] = await this._db
+      .insert(schema.workerSchedule)
+      .values({
+        workerId,
+        dayOfWeek: dto.day,
+        startTime: dto.startHour,
+        endTime: dto.endHour,
+      })
+      .returning();
+
+    return schedule;
+  }
+
+  async deleteSchedule(
+    workerId: string,
+    day: number,
+  ): Promise<schema.WorkerSchedule> {
+    const [schedule] = await this._db
+      .delete(schema.workerSchedule)
+      .where(
+        and(
+          eq(schema.workerSchedule.workerId, workerId),
+          eq(schema.workerSchedule.dayOfWeek, day),
+        ),
+      )
+      .returning();
+    return schedule;
+  }
+
+  private async findWorkerWithServicesAndSchedulesById(workerId: string) {
     return this._db.query.worker.findFirst({
       where: eq(schema.worker.id, workerId),
       with: {
@@ -196,11 +254,20 @@ export class WorkerRepository {
             },
           },
         },
+        schedules: {
+          columns: {
+            dayOfWeek: true,
+            startTime: true,
+            endTime: true,
+          },
+        },
       },
     });
   }
 
-  private toDto(row: NonNullable<WorkerWithServices>): WorkerResponseDto {
+  private toDto(
+    row: NonNullable<WorkerWithServicesAndSchedules>,
+  ): WorkerResponseDto {
     return new WorkerResponseDto(
       row.id,
       row.fullName,
@@ -209,6 +276,11 @@ export class WorkerRepository {
       row.bio,
       row.workerServices.map((ws) => ({
         id: ws.service.id,
+      })),
+      row.schedules.map((schedule) => ({
+        day: schedule.dayOfWeek,
+        startTime: schedule.startTime,
+        endTime: schedule.endTime,
       })),
     );
   }
