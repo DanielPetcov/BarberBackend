@@ -8,6 +8,7 @@ import { service } from './service';
 import { workerServices } from './workerServices';
 import { reservation } from './reservation';
 import { workerSchedule } from './workerSchedule';
+import { availabilityOverrides } from './availabilityOverrides';
 
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
@@ -36,6 +37,7 @@ export const workerRelations = relations(worker, ({ one, many }) => ({
   workerServices: many(workerServices),
   reservations: many(reservation),
   schedules: many(workerSchedule),
+  availabilityOverrides: many(availabilityOverrides),
 }));
 
 export const serviceRelations = relations(service, ({ many }) => ({
@@ -71,3 +73,13 @@ export const scheduleRelations = relations(workerSchedule, ({ one }) => ({
     references: [worker.id],
   }),
 }));
+
+export const availabilityOverridesRelations = relations(
+  availabilityOverrides,
+  ({ one }) => ({
+    worker: one(worker, {
+      fields: [availabilityOverrides.workerId],
+      references: [worker.id],
+    }),
+  }),
+);

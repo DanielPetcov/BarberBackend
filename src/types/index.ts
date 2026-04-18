@@ -8,3 +8,12 @@ export const reservationStatus = [
   'no_show',
 ] as const;
 export type ReservationStatus = (typeof reservationStatus)[number];
+
+export type WorkerSchedule = {
+  id: string;
+  dayOfWeek: number;
+  workerId: string;
+  startTime: string;
+  endTime: string;
+  isWorking: boolean;
+};

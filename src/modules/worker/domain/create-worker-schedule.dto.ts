@@ -7,6 +7,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
   ValidationArguments,
+  IsBoolean,
 } from 'class-validator';
 
 const TIME_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
@@ -36,4 +37,7 @@ export class CreateWorkerScheduleDto {
   @Matches(TIME_REGEX, { message: 'endHour must be in HH:mm format' })
   @Validate(IsEndAfterStartConstraint)
   endHour: string;
+
+  @IsBoolean()
+  isWorking: boolean;
 }

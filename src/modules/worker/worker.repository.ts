@@ -69,6 +69,7 @@ export class WorkerRepository {
             dayOfWeek: true,
             startTime: true,
             endTime: true,
+            isWorking: true,
           },
         },
       },
@@ -94,6 +95,7 @@ export class WorkerRepository {
             dayOfWeek: true,
             startTime: true,
             endTime: true,
+            isWorking: true,
           },
         },
       },
@@ -126,6 +128,7 @@ export class WorkerRepository {
             dayOfWeek: true,
             startTime: true,
             endTime: true,
+            isWorking: true,
           },
         },
       },
@@ -208,9 +211,15 @@ export class WorkerRepository {
     return removed.id ?? null;
   }
 
-  async getSchedule(workerId: string): Promise<schema.WorkerSchedule | null> {
+  async getSchedule(
+    workerId: string,
+    dayOfWeek: number,
+  ): Promise<schema.WorkerSchedule | null> {
     const schedule = await this._db.query.workerSchedule.findFirst({
-      where: eq(schema.workerSchedule.workerId, workerId),
+      where: and(
+        eq(schema.workerSchedule.workerId, workerId),
+        eq(schema.workerSchedule.dayOfWeek, dayOfWeek),
+      ),
     });
 
     return schedule ?? null;
@@ -227,6 +236,7 @@ export class WorkerRepository {
         dayOfWeek: dto.day,
         startTime: dto.startHour,
         endTime: dto.endHour,
+        isWorking: dto.isWorking,
       })
       .returning();
 
@@ -267,6 +277,7 @@ export class WorkerRepository {
             dayOfWeek: true,
             startTime: true,
             endTime: true,
+            isWorking: true,
           },
         },
       },
@@ -289,6 +300,7 @@ export class WorkerRepository {
         day: schedule.dayOfWeek,
         startTime: schedule.startTime,
         endTime: schedule.endTime,
+        isWorking: schedule.isWorking,
       })),
     );
   }

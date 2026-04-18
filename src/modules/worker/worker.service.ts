@@ -7,6 +7,7 @@ import { getBusinessIdAdmin } from 'src/helpers';
 import { isAdmin } from 'src/helpers/isAdmin';
 import { UserService } from '../user/user.service';
 import { CreateWorkerScheduleDto } from './domain/create-worker-schedule.dto';
+import { WorkerSchedule } from 'src/types';
 
 @Injectable()
 export class WorkerService {
@@ -124,8 +125,11 @@ export class WorkerService {
     return removed;
   }
 
-  async getSchedule(workerId: string) {
-    return await this._repo.getSchedule(workerId);
+  async getSchedule(
+    workerId: string,
+    dayOfWeek: number,
+  ): Promise<WorkerSchedule | null> {
+    return await this._repo.getSchedule(workerId, dayOfWeek);
   }
 
   async createSchedule(workerId: string, dto: CreateWorkerScheduleDto) {

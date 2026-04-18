@@ -10,6 +10,7 @@ export class WorkerResponseDto {
       day: number;
       startTime: string;
       endTime: string;
+      isWorking: boolean;
     }[],
   ) {}
 }

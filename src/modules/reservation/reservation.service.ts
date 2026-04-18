@@ -4,8 +4,13 @@ import { ServiceService } from '../service/service.service';
 import { WorkerBusySlotsDto } from './domain/workerBusySlots.dto';
 import {
   buildDateTime,
+  getDayOfWeekFromDateString,
+  hasOverlap,
+  isWithinRange,
   normalizeTimeString,
   resolveStartAndEndTimeFromSlot,
+  timeToMinutes,
+  toDateOnlyString,
 } from 'src/helpers';
 import { WorkerBusyCalendarDto } from './domain/workerBusyCalendar.dto';
 import { Reservation } from '../drizzle/schemas';
@@ -14,6 +19,11 @@ import { BusinessService } from '../business/business.service';
 import { ReservationResponse } from './domain/reservation-response.dto';
 import { ReservationStatus } from 'src/types';
 import { WorkerService } from '../worker/worker.service';
+import {
+  validateNoOverlap,
+  validateNotInPast,
+  validateSchedule,
+} from './helpers';
 
 @Injectable()
 export class ReservationService {
@@ -47,26 +57,45 @@ export class ReservationService {
         dto.barberId,
         dto.serviceId,
       );
-      if (!workerService) throw new Error('Failed to fetch worker service');
+      if (!workerService) throw new Error('Failed to fetch barber service');
+      if (!workerService.isActive)
+        throw new Error('This service is not available for that barber');
 
-      const workerSchedule = await this._workerService.getSchedule(
-        dto.barberId,
-      );
-      if (!workerSchedule)
-        throw new Error('Failed to fetch the worker schedule');
-
+      const reservationDate = dto.date;
       const times = resolveStartAndEndTimeFromSlot(dto.timeSlot, workerService);
 
       if (!times) throw new Error('Failed to resolve the timeslot');
 
       const startTime = times.startTime;
       const endTime = times.endTime;
-      const reservationDate = dto.date;
 
       if (!startTime || !endTime) {
         throw new BadRequestException('Invalid reservation date or time');
       }
 
+      const dayNumber = getDayOfWeekFromDateString(reservationDate);
+
+      // 1. No booking in the past
+      validateNotInPast(reservationDate, startTime);
+
+      // 2. Validate worker schedule
+      const workerSchedule = await this._workerService.getSchedule(
+        dto.barberId,
+        dayNumber,
+      );
+      await validateSchedule(startTime, endTime, workerSchedule);
+
+      // 3. Validate blocked / unavailable periods
+      // need to verify the existing exceptions of that worker for that day
+
+      // 4. No overlap for same worker and date
+      const busySlots = await this.getWorkerBusySlots(
+        dto.barberId,
+        reservationDate,
+      );
+      await validateNoOverlap(startTime, endTime, busySlots.busySlots);
+
+      // 5. Create reservation
       const reservation = await this._repo.createReservation({
         businessId,
         startTime,
@@ -77,8 +106,13 @@ export class ReservationService {
       });
 
       return this.toDto(reservation);
-    } catch (error) {
+    } catch (error: any) {
+      if (error?.code === '23505') {
+        throw new BadRequestException('Selected slot is already reserved');
+      }
+
       this.logger.error(error);
+      throw error;
     }
   }
 

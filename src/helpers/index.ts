@@ -5,6 +5,8 @@ export * from './isAdmin';
 export * from './resolveStartAndEndTimeFromSlot';
 export * from './buildDateTime';
 
+export * from './reservationHelpers';
+
 export function normalizeTimeString(time: string): string {
   return time.slice(0, 5);
 }
