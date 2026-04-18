@@ -37,3 +37,5 @@ export const workerServices = pgTable(
     index('worker_services_service_id_idx').on(table.serviceId),
   ],
 );
+
+export type WorkerServiceTableType = typeof workerServices.$inferSelect;

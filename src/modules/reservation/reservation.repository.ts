@@ -7,7 +7,24 @@ import { and, eq, gte, lte } from 'drizzle-orm';
 import { ReservationResponseWithWorkerDto } from './domain/reservation-response.dto';
 
 import { Reservation } from '../drizzle/schemas';
-import { WorkerBusySlotsDto } from './domain/workerBusySlots.dto';
+
+interface CreateReservationRepoDto {
+  businessId: string;
+  workerId: string;
+  serviceId: string;
+  reservationDate: string;
+  startTime: string;
+  endTime: string;
+}
+
+// {
+//   businessId: "1ac3b679-fe4f-4c42-a9eb-0cb28e303d85",
+//   workerId: "734b26cb-737b-42d2-bcd6-abdc74e52528",
+//   serviceId: "f5647f82-3158-43f0-9ffc-c6d2ea841aa6",
+//   reservationDate: "2026-04-21",
+//   startTime: "09:30:00",
+//   endTime: "10:00:00"
+// }
 
 @Injectable()
 export class ReservationRepository {
@@ -15,6 +32,15 @@ export class ReservationRepository {
     @Inject(DrizzleAsyncProvider)
     private readonly _db: NodePgDatabase<typeof schema>,
   ) {}
+
+  async createReservation(dto: CreateReservationRepoDto) {
+    const [reservation] = await this._db
+      .insert(schema.reservation)
+      .values(dto)
+      .returning();
+
+    return reservation;
+  }
 
   async getWorkerTotalReservations(
     workerId: string,
@@ -35,7 +61,7 @@ export class ReservationRepository {
 
   async getWorkerReservationsByDate(
     workerId: string,
-    reservationDate: Date,
+    reservationDate: string,
   ): Promise<Reservation[]> {
     return await this._db.query.reservation.findMany({
       where: and(
@@ -48,14 +74,14 @@ export class ReservationRepository {
 
   async getWorkerReservationsInRange(
     workerId: string,
-    from: Date,
-    to: Date,
+    from: string,
+    to?: string,
   ): Promise<Reservation[]> {
     return await this._db.query.reservation.findMany({
       where: and(
         eq(schema.reservation.workerId, workerId),
         gte(schema.reservation.reservationDate, from),
-        lte(schema.reservation.reservationDate, to),
+        ...(to ? [lte(schema.reservation.reservationDate, to)] : []),
       ),
       orderBy: (reservation, { asc }) => [
         asc(reservation.reservationDate),

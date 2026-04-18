@@ -30,4 +30,8 @@ export class ServiceService {
   async getAllPublic() {
     return await this._repo.getAllPublic();
   }
+
+  async getWorkerService(workerId: string, serviceId: string) {
+    return await this._repo.getWorkerService(workerId, serviceId);
+  }
 }

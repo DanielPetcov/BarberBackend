@@ -1,5 +1,5 @@
 import { timestamp } from 'drizzle-orm/pg-core';
-import { uuid } from 'drizzle-orm/pg-core';
+import { uuid, time } from 'drizzle-orm/pg-core';
 import { pgTable, date, text } from 'drizzle-orm/pg-core';
 import { reservationStatuses } from './enums';
 import { business } from './business';
@@ -21,9 +21,9 @@ export const reservation = pgTable('reservations', {
     .references(() => service.id)
     .notNull(),
 
-  reservationDate: date('reservation_date', { mode: 'date' }).notNull(),
-  startTime: timestamp('start_time').notNull(),
-  endTime: timestamp('end_time').notNull(),
+  reservationDate: date('reservation_date', { mode: 'string' }).notNull(),
+  startTime: time('start_time', { precision: 0 }).notNull(),
+  endTime: time('end_time', { precision: 0 }).notNull(),
 
   status: reservationStatuses('status').default('pending').notNull(),
   notes: text('notes'),

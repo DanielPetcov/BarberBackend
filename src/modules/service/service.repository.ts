@@ -43,6 +43,23 @@ export class ServiceRepository {
     return row ?? null;
   }
 
+  async getWorkerService(workerId: string, serviceId: string) {
+    const workerService = await this._db.query.workerServices.findFirst({
+      where: and(
+        eq(schema.workerServices.workerId, workerId),
+        eq(schema.workerServices.serviceId, serviceId),
+      ),
+      with: {
+        service: {
+          columns: {
+            durationMinutes: true,
+          },
+        },
+      },
+    });
+    return workerService;
+  }
+
   async create(dto: schema.CreateService): Promise<ServiceEntity> {
     const [row] = await this._db.insert(schema.service).values(dto).returning();
     return row;
@@ -77,6 +94,16 @@ export class ServiceRepository {
                 id: true,
                 fullName: true,
                 photoUrl: true,
+              },
+              with: {
+                schedules: {
+                  columns: {
+                    dayOfWeek: true,
+                    startTime: true,
+                    endTime: true,
+                    isWorking: true,
+                  },
+                },
               },
             },
           },

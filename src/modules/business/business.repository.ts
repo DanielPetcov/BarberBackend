@@ -33,6 +33,17 @@ export class BusinessRepository {
       throw error;
     }
   }
+
+  async getIdBySlug(businessSlug: string) {
+    const business = await this._db.query.business.findFirst({
+      where: eq(schema.business.slug, businessSlug),
+      columns: {
+        id: true,
+      },
+    });
+    return business?.id;
+  }
+
   async create(model: CreateBusiness): Promise<BusinessEntity> {
     const [row] = await this._db
       .insert(schema.business)

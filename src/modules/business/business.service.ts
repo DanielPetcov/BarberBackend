@@ -17,6 +17,10 @@ export class BusinessService {
     }
   }
 
+  async getBusinessIdBySlug(businessSlug: string) {
+    return await this._repo.getIdBySlug(businessSlug);
+  }
+
   async createBusiness(dto: CreateBusiness) {
     const business = await this._repo.create(dto);
     return business;

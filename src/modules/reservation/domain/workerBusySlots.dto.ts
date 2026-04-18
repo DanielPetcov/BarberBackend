@@ -1,4 +1,4 @@
 export interface WorkerBusySlotsDto {
-  date: Date;
-  busySlots: string[];
+  date: string;
+  busySlots: { startTime: string; endTime: string }[];
 }

@@ -8,5 +8,6 @@ import { BusinessController } from './business.controller';
   imports: [DrizzleModule],
   providers: [BusinessService, BusinessRepository],
   controllers: [BusinessController],
+  exports: [BusinessService],
 })
 export class BusinessModule {}

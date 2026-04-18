@@ -12,6 +12,12 @@ export class ServiceWorkersResponseDto {
         id: string;
         fullName: string;
         photoUrl: string | null;
+        schedules: {
+          dayOfWeek: number;
+          startTime: string;
+          endTime: string;
+          isWorking: boolean;
+        }[];
       };
     }[],
   ) {}
