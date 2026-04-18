@@ -1,9 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Req,
 } from '@nestjs/common';
@@ -11,6 +13,7 @@ import { AdminService } from './admin.service';
 import { CreateServiceDto } from '../service/domain/create-service.dto';
 import { CreateWorkerDto } from '../worker/domain/create-worker.dto';
 import { CreateWorkerScheduleDto } from '../worker/domain/create-worker-schedule.dto';
+import { isReservationStatus } from 'src/helpers';
 
 @Controller('admin')
 export class AdminController {
@@ -116,5 +119,23 @@ export class AdminController {
     @Param('day') day: number,
   ) {
     return await this._service.deleteSchedule(req.headers, workerId, day);
+  }
+
+  // reservations
+
+  @Get('/reservations')
+  async getReservations(@Req() req: Request) {
+    return await this._service.getReservations(req.headers);
+  }
+
+  @Patch('/reservations/:reservationId/status/:status')
+  async updateReservationStatus(
+    @Param('reservationId') reservationId: string,
+    @Param('status') status: string,
+  ) {
+    if (!isReservationStatus(status))
+      throw new BadRequestException('status type is invalid');
+
+    return await this._service.updateReservationStatus(reservationId, status);
   }
 }

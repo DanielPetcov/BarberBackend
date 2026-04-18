@@ -6,7 +6,7 @@ export const reservationStatuses = pgEnum('reservation_statuses', [
   'confirmed',
   'completed',
   'canceled_by_client',
-  'canceled_by_stuff',
+  'canceled_by_staff',
   'declined',
   'no_show',
 ]);

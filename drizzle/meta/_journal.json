@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1776516413633,
+      "tag": "0000_late_black_widow",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776516651740,
+      "tag": "0001_slim_joystick",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776523663619,
+      "tag": "0002_minor_silver_sable",
+      "breakpoints": true
+    }
+  ]
+}

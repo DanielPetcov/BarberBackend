@@ -1,0 +1,1 @@
+ALTER TABLE "reservations" ADD CONSTRAINT "reservations_worker_id_reservation_date_start_time_unique" UNIQUE("worker_id","reservation_date","start_time");

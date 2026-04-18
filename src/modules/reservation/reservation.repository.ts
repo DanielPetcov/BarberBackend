@@ -7,6 +7,7 @@ import { and, eq, gte, lte } from 'drizzle-orm';
 import { ReservationResponseWithWorkerDto } from './domain/reservation-response.dto';
 
 import { Reservation } from '../drizzle/schemas';
+import { ReservationStatus } from 'src/types';
 
 interface CreateReservationRepoDto {
   businessId: string;
@@ -32,6 +33,42 @@ export class ReservationRepository {
     @Inject(DrizzleAsyncProvider)
     private readonly _db: NodePgDatabase<typeof schema>,
   ) {}
+
+  async getReservations(businessId: string) {
+    const reservations = await this._db.query.reservation.findMany({
+      where: eq(schema.reservation.businessId, businessId),
+      with: {
+        worker: {
+          columns: {
+            id: true,
+            fullName: true,
+          },
+        },
+        service: {
+          columns: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: (reservation, { desc }) => [desc(reservation.createdAt)],
+    });
+    return reservations;
+  }
+
+  async updateReservationStatus(
+    reservationId: string,
+    status: ReservationStatus,
+  ) {
+    const reservation = await this._db
+      .update(schema.reservation)
+      .set({
+        status,
+      })
+      .where(eq(schema.reservation.id, reservationId))
+      .returning();
+    return reservation;
+  }
 
   async createReservation(dto: CreateReservationRepoDto) {
     const [reservation] = await this._db

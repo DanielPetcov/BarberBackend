@@ -5,12 +5,15 @@ import { CreateServiceDto } from '../service/domain/create-service.dto';
 import { WorkerService } from '../worker/worker.service';
 import { CreateWorkerDto } from '../worker/domain/create-worker.dto';
 import { CreateWorkerScheduleDto } from '../worker/domain/create-worker-schedule.dto';
+import { ReservationService } from '../reservation/reservation.service';
+import { ReservationStatus } from 'src/types';
 
 @Injectable()
 export class AdminService {
   constructor(
     private readonly _serviceService: ServiceService,
     private readonly _workerService: WorkerService,
+    private readonly _reservationService: ReservationService,
   ) {}
 
   // services
@@ -107,5 +110,24 @@ export class AdminService {
     if (!businessId) return;
 
     return await this._workerService.deleteSchedule(workerId, day);
+  }
+
+  // reservations
+
+  async getReservations(headers: Headers) {
+    const businessId = await getBusinessIdAdmin(headers);
+    if (!businessId) return;
+
+    return await this._reservationService.getReservations(businessId);
+  }
+
+  async updateReservationStatus(
+    reservationId: string,
+    status: ReservationStatus,
+  ) {
+    return await this._reservationService.updateReservationStatus(
+      reservationId,
+      status,
+    );
   }
 }

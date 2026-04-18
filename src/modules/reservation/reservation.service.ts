@@ -12,6 +12,7 @@ import { Reservation } from '../drizzle/schemas';
 import { CreateReservationDto } from './domain/create-reservation.dto';
 import { BusinessService } from '../business/business.service';
 import { ReservationResponse } from './domain/reservation-response.dto';
+import { ReservationStatus } from 'src/types';
 
 @Injectable()
 export class ReservationService {
@@ -22,6 +23,17 @@ export class ReservationService {
   ) {}
 
   private logger = new Logger(ReservationService.name);
+
+  async getReservations(businessId: string) {
+    return await this._repo.getReservations(businessId);
+  }
+
+  async updateReservationStatus(
+    reservationId: string,
+    status: ReservationStatus,
+  ) {
+    return await this._repo.updateReservationStatus(reservationId, status);
+  }
 
   async createReservation(dto: CreateReservationDto, businessSlug: string) {
     try {
