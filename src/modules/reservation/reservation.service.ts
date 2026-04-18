@@ -13,6 +13,7 @@ import { CreateReservationDto } from './domain/create-reservation.dto';
 import { BusinessService } from '../business/business.service';
 import { ReservationResponse } from './domain/reservation-response.dto';
 import { ReservationStatus } from 'src/types';
+import { WorkerService } from '../worker/worker.service';
 
 @Injectable()
 export class ReservationService {
@@ -20,6 +21,7 @@ export class ReservationService {
     private readonly _repo: ReservationRepository,
     private readonly _serviceService: ServiceService,
     private readonly _businessService: BusinessService,
+    private readonly _workerService: WorkerService,
   ) {}
 
   private logger = new Logger(ReservationService.name);
@@ -46,6 +48,12 @@ export class ReservationService {
         dto.serviceId,
       );
       if (!workerService) throw new Error('Failed to fetch worker service');
+
+      const workerSchedule = await this._workerService.getSchedule(
+        dto.barberId,
+      );
+      if (!workerSchedule)
+        throw new Error('Failed to fetch the worker schedule');
 
       const times = resolveStartAndEndTimeFromSlot(dto.timeSlot, workerService);
 

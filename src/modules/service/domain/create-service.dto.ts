@@ -1,8 +1,16 @@
+import { IsString, IsOptional, IsNumber } from 'class-validator';
+
 export class CreateServiceDto {
-  constructor(
-    public name: string,
-    public description: string | null,
-    public price: number,
-    public durationMinutes: number,
-  ) {}
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  description: string | null;
+
+  @IsNumber()
+  price: number;
+
+  @IsNumber()
+  durationMinutes: number;
 }

@@ -208,6 +208,14 @@ export class WorkerRepository {
     return removed.id ?? null;
   }
 
+  async getSchedule(workerId: string): Promise<schema.WorkerSchedule | null> {
+    const schedule = await this._db.query.workerSchedule.findFirst({
+      where: eq(schema.workerSchedule.workerId, workerId),
+    });
+
+    return schedule ?? null;
+  }
+
   async createSchedule(
     workerId: string,
     dto: CreateWorkerScheduleDto,

@@ -1,12 +1,10 @@
 export class BusinessEntity {
-  constructor(
-    public name: string,
-    public phone: string,
-    public email: string | null,
-    public address: string,
-    public city: string | null,
-    public description: string | null,
-    public logoUrl: string | null,
-    public telegramChatId: string | null,
-  ) {}
+  name: string;
+  phone: string;
+  email: string | null;
+  address: string;
+  city: string | null;
+  description: string | null;
+  logoUrl: string | null;
+  telegramChatId: string | null;
 }

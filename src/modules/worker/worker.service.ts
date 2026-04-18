@@ -124,6 +124,10 @@ export class WorkerService {
     return removed;
   }
 
+  async getSchedule(workerId: string) {
+    return await this._repo.getSchedule(workerId);
+  }
+
   async createSchedule(workerId: string, dto: CreateWorkerScheduleDto) {
     return await this._repo.createSchedule(workerId, dto);
   }

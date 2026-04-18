@@ -1,17 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Req,
-} from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
 import { WorkerService } from './worker.service';
-import { CreateWorkerScheduleDto } from './domain/create-worker-schedule.dto';
 import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 
-@Controller('workers')
+@Controller('barbers')
 export class WorkerController {
   constructor(private readonly _service: WorkerService) {}
 

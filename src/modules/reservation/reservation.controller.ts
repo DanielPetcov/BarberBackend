@@ -18,29 +18,29 @@ export class ReservationController {
   constructor(private readonly _service: ReservationService) {}
 
   @AllowAnonymous()
-  @Get('/service/:serviceId/workers')
+  @Get('/service/:serviceId/barbers')
   async getServiceAvailableWorkers(@Param('serviceId') serviceId: string) {
     return await this._service.getServiceAvailableWorkers(serviceId);
   }
 
   @AllowAnonymous()
-  @Get('/workers/:workerId/slots')
+  @Get('/barbers/:barberId/slots')
   async getWorkerBusySlots(
     @Query('date') date: string,
-    @Param('workerId') workerId: string,
+    @Param('barberId') barberId: string,
   ) {
     if (!date) throw new BadRequestException('missing date');
     if (!isDateOnlyString(date)) {
       throw new BadRequestException('date must be in format YYYY-MM-DD');
     }
 
-    return await this._service.getWorkerBusySlots(workerId, date);
+    return await this._service.getWorkerBusySlots(barberId, date);
   }
 
   @AllowAnonymous()
-  @Get('/workers/:workerId/calendar')
+  @Get('/barbers/:barberId/calendar')
   async getWorker(
-    @Param('workerId') workerId: string,
+    @Param('barberId') barberId: string,
     @Query('from') from: string,
     @Query('to') to?: string,
   ) {
@@ -53,7 +53,7 @@ export class ReservationController {
       throw new BadRequestException('to must be in format YYYY-MM-DD');
     }
 
-    return await this._service.getWorkerBusyCalendar(workerId, from, to);
+    return await this._service.getWorkerBusyCalendar(barberId, from, to);
   }
 
   @AllowAnonymous()

@@ -35,8 +35,6 @@ export class AdminController {
 
   @Post('/services')
   async createService(@Req() req: Request, @Body() dto: CreateServiceDto) {
-    console.log(dto);
-
     return await this._service.createService(req.headers, dto);
   }
 
@@ -45,80 +43,80 @@ export class AdminController {
     return await this._service.deleteService(req.headers, id);
   }
 
-  // workers
+  // barbers
 
-  @Get('/workers')
+  @Get('/barbers')
   async getWorkers(@Req() req: Request) {
     return await this._service.getWorkers(req.headers);
   }
 
-  @Get('/workers/:id')
+  @Get('/barbers/:id')
   async getWorker(@Req() req: Request, @Param('id') id: string) {
     return await this._service.getWorker(req.headers, id);
   }
 
-  @Post('/workers')
+  @Post('/barbers')
   async createWorker(@Req() req: Request, @Body() dto: CreateWorkerDto) {
     return await this._service.createWorker(req.headers, dto);
   }
 
-  @Post('/workers/:id/deactivate')
+  @Post('/barbers/:id/deactivate')
   async deactivateWorker(@Req() req: Request, @Param('id') id: string) {
     return await this._service.deactivateWorker(req.headers, id);
   }
 
-  @Post('/workers/:id/activate')
+  @Post('/barbers/:id/activate')
   async activateWorker(@Req() req: Request, @Param('id') id: string) {
     return await this._service.activateWorker(req.headers, id);
   }
 
-  @Delete('/workers/:id')
+  @Delete('/barbers/:id')
   async deleteWorker(@Req() req: Request, @Param('id') id: string) {
     return await this._service.deleteWorker(req.headers, id);
   }
 
-  @Post('/workers/:workerId/service/:serviceId')
+  @Post('/barbers/:barberId/service/:serviceId')
   async addWorkerService(
     @Req() req: Request,
-    @Param('workerId') workerId: string,
+    @Param('barberId') barberId: string,
     @Param('serviceId') serviceId: string,
   ) {
     return await this._service.assignServiceToWorker(
       req.headers,
-      workerId,
+      barberId,
       serviceId,
     );
   }
 
-  @Delete('/workers/:workerId/service/:serviceId')
+  @Delete('/barbers/:barberId/service/:serviceId')
   async removeServiceFromWorker(
     @Req() req: Request,
-    @Param('workerId') workerId: string,
+    @Param('barberId') barberId: string,
     @Param('serviceId') serviceId: string,
   ) {
     return await this._service.removeServiceFromWorker(
       req.headers,
-      workerId,
+      barberId,
       serviceId,
     );
   }
 
-  @Post('/workers/:workerId/schedules')
+  @Post('/barbers/:barberId/schedules')
   async createWorkerSchedule(
     @Req() req: Request,
-    @Param('workerId') workerId: string,
+    @Param('barberId') barberId: string,
     @Body() dto: CreateWorkerScheduleDto,
   ) {
-    return await this._service.createSchedule(req.headers, workerId, dto);
+    return await this._service.createSchedule(req.headers, barberId, dto);
   }
 
-  @Delete('/workers/:workerId/schedules/:day')
+  @Delete('/barbers/:barberId/schedules/:day')
   async deleteWorkerSchedule(
     @Req() req: Request,
-    @Param('workerId') workerId: string,
+    @Param('barberId') barberId: string,
     @Param('day') day: number,
   ) {
-    return await this._service.deleteSchedule(req.headers, workerId, day);
+    return await this._service.deleteSchedule(req.headers, barberId, day);
   }
 
   // reservations

@@ -5,7 +5,6 @@ export * from './reservation';
 export * from './service';
 export * from './user';
 export * from './worker';
-export * from './workerAvailability';
 export * from './workerServices';
 export * from './workerSchedule';
 

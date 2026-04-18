@@ -1,7 +1,13 @@
+import { IsEmail, IsString } from 'class-validator';
+
 export class CreateWorkerDto {
-  constructor(
-    public name: string,
-    public email: string,
-    public password: string,
-  ) {}
+  @IsString()
+  name: string;
+
+  @IsString()
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  password: string;
 }
