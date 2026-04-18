@@ -12,12 +12,12 @@ export class AvailabilityOverridesRepositor {
     private readonly _db: NodePgDatabase<typeof schema>,
   ) {}
 
-  async get(barberId: string, date: string) {
+  async get(barberId: string, date?: string) {
     const availabilityOverride =
-      await this._db.query.availabilityOverrides.findFirst({
+      await this._db.query.availabilityOverrides.findMany({
         where: and(
           eq(schema.availabilityOverrides.workerId, barberId),
-          eq(schema.availabilityOverrides.date, date),
+          date ? eq(schema.availabilityOverrides.date, date) : undefined,
         ),
       });
     return availabilityOverride;

@@ -3,14 +3,10 @@ import { ReservationRepository } from './reservation.repository';
 import { ServiceService } from '../service/service.service';
 import { WorkerBusySlotsDto } from './domain/workerBusySlots.dto';
 import {
-  buildDateTime,
   getDayOfWeekFromDateString,
   hasOverlap,
-  isWithinRange,
   normalizeTimeString,
   resolveStartAndEndTimeFromSlot,
-  timeToMinutes,
-  toDateOnlyString,
 } from 'src/helpers';
 import { WorkerBusyCalendarDto } from './domain/workerBusyCalendar.dto';
 import { Reservation } from '../drizzle/schemas';
@@ -24,6 +20,7 @@ import {
   validateNotInPast,
   validateSchedule,
 } from './helpers';
+import { AvailabilityOverridesService } from '../availabilityOverrides/availabilityOverrides.service';
 
 @Injectable()
 export class ReservationService {
@@ -32,6 +29,7 @@ export class ReservationService {
     private readonly _serviceService: ServiceService,
     private readonly _businessService: BusinessService,
     private readonly _workerService: WorkerService,
+    private readonly _overrideService: AvailabilityOverridesService,
   ) {}
 
   private logger = new Logger(ReservationService.name);
@@ -85,8 +83,26 @@ export class ReservationService {
       );
       await validateSchedule(startTime, endTime, workerSchedule);
 
-      // 3. Validate blocked / unavailable periods
-      // need to verify the existing exceptions of that worker for that day
+      // 3. Validate overrides entries
+      const overrides = await this._overrideService.getAvailabilityOverride(
+        dto.barberId,
+        reservationDate,
+      );
+      if (overrides) {
+        const hasDayOff = overrides.some((o) => o.isDayOff);
+
+        if (hasDayOff) {
+          throw new BadRequestException('Barber is unavailable on this day');
+        }
+        const overlapsOverride = overrides.some((o) => {
+          if (o.isDayOff || !o.startTime || !o.endTime) return false;
+
+          return hasOverlap(startTime, endTime, o.startTime, o.endTime);
+        });
+        if (overlapsOverride) {
+          throw new BadRequestException('Selected slot is unavailable');
+        }
+      }
 
       // 4. No overlap for same worker and date
       const busySlots = await this.getWorkerBusySlots(

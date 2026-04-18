@@ -20,13 +20,16 @@ export class AvailabilityOverridesController {
   @Get('/:barberId')
   async getAvailabilityOverride(
     @Param('barberId') barberId: string,
-    @Query('date') date: string,
+    @Query('date') date?: string,
   ) {
-    if (!date) throw new BadRequestException('missing date');
-    if (!isDateOnlyString(date)) {
-      throw new BadRequestException('date must be in format YYYY-MM-DD');
+    try {
+      if (date && !isDateOnlyString(date)) {
+        throw new BadRequestException('date must be in format YYYY-MM-DD');
+      }
+      return await this._service.getAvailabilityOverride(barberId, date);
+    } catch (error) {
+      console.error(error);
     }
-    return await this._service.getAvailabilityOverride(barberId, date);
   }
 
   @Post()
@@ -34,10 +37,14 @@ export class AvailabilityOverridesController {
     @Req() req: Request,
     @Body() dto: CreateAvailabilityOverrideDto,
   ) {
-    return await this._service.createAvailabilityOverride(req.headers, dto);
+    try {
+      return await this._service.createAvailabilityOverride(req.headers, dto);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  @Delete('overrideId')
+  @Delete('/:overrideId')
   async deleteAvailabilityOverride(@Param('overrideId') overrideId: string) {
     return await this._service.deleteAvailabilityOverride(overrideId);
   }
